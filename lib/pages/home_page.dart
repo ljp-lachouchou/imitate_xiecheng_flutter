@@ -1,8 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_learn/dao/login_dao.dart';
+import 'package:flutter_learn/model/home_model.dart';
+import 'package:flutter_learn/pages/search_page.dart';
+import 'package:flutter_learn/util/navigator_util.dart';
 import 'package:flutter_learn/widget/banner_widget.dart';
+import 'package:flutter_learn/widget/grid_nav_widget.dart';
+import 'package:flutter_learn/widget/loading_container.dart';
+import 'package:flutter_learn/widget/local_nav_widget.dart';
+import 'package:flutter_learn/widget/search_bar_widget.dart';
+import 'package:flutter_learn/widget/sub_nav_widget.dart';
+
+import '../dao/home_dao.dart';
+import '../widget/sales_box_widget.dart';
+
+const searchBarDefaultText = '网红打卡地 景点 酒店 美食';
 
 class HomePage extends StatefulWidget {
+  static Config? configModel;
   const HomePage({super.key});
 
   @override
@@ -11,14 +25,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
+  bool _isLoading = true;
   static const appbarScrollOffset = 100;
-  final bannerList = [
-    "https://www.devio.org/io/flutter_app/img/banner/100h10000000q7ght9352.jpg",
-    "https://o.devio.org/images/fa/cat-4098058__340.webp",
-    "https://o.devio.org/images/fa/photo-1601513041797-a79a526a521e.webp",
-    "https://o.devio.org/images/other/as-cover.png",
-    "https://o.devio.org/images/other/rn-cover2.png",
-  ];
+  List<CommonModel> bannerList = [];
+  List<CommonModel> localNavList = [];
+  List<CommonModel> subNavList = [];
+  GridNav? gridNavModel;
+  SalesBox? salesBoxModel;
   double appBarOpacity = 0;
   get _logoutBtn => Padding(
     padding: EdgeInsets.symmetric(vertical: 5),
@@ -37,26 +50,10 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      body: Stack(
-        children: [
-          MediaQuery.removePadding(
-            removeTop: true, //移除顶部空白
-            context: context,
-            child: NotificationListener(
-              child: _listView,
-              onNotification: (notification) {
-                if (notification is ScrollUpdateNotification &&
-                    notification.depth == 0) {
-                  //滚动更新通知 注意 只要有滚动更新就会回调此方法
-                  //notification.depth == 0表示只监听listView的滚动
-                  _onScroll(notification.metrics.pixels); //当前滚动的像素距离
-                }
-                return false; //只监听 不消费
-              },
-            ), //监听滚动
-          ),
-          _appBar,
-        ],
+      backgroundColor: const Color(0xfff2f2f2),
+      body: LoadingContainer(
+        isLoading: _isLoading,
+        child: Stack(children: [_contentView, _appBar]),
       ),
     );
   }
@@ -64,24 +61,74 @@ class _HomePageState extends State<HomePage>
   @override
   bool get wantKeepAlive => true;
 
-  get _appBar => Opacity(
-    opacity: appBarOpacity,
-    child: Container(
-      height: 80,
-      decoration: BoxDecoration(color: Colors.white),
-      child: const Center(
-        child: Padding(padding: EdgeInsets.only(top: 20), child: Text("首页")),
-      ),
-    ),
-  );
+  get _appBar {
+    //获取刘海屏实际的top
+    double top = MediaQuery.of(context).padding.top;
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.only(top: top),
+          height: 60 + top,
+          decoration: BoxDecoration(
+            color: Color.fromARGB((appBarOpacity * 255).toInt(), 255, 255, 255),
+          ),
+          child: SearchBarWidget(
+            searchBarType:
+                appBarOpacity > 0.2
+                    ? SearchBarType.homeLight
+                    : SearchBarType.home,
+            inputBoxClick: _jumpToSearch,
+            defaultText: searchBarDefaultText,
+            rightButtonClick: LoginDao.logout,
+          ),
+        ),
+        Container(
+          height: appBarOpacity > 0.2 ? 0.5 : 0,
+          decoration: BoxDecoration(
+            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 0.5)],
+          ),
+        ),
+      ],
+    );
+  }
 
   get _listView => ListView(
     children: [
       BannerWidget(bannerList: bannerList),
+      LocalNavWidget(localNavList: localNavList),
+      if (gridNavModel != null) GridNavWidget(gridNavModel: gridNavModel!),
+      SubNavWidget(subNavList: subNavList),
+      if (salesBoxModel != null) SalesBoxWidget(salesBox: salesBoxModel!),
       _logoutBtn,
-      const SizedBox(height: 800, child: ListTile(title: Text("hhh"))),
     ],
   );
+
+  get _contentView => MediaQuery.removePadding(
+    removeTop: true, //移除顶部空白
+    context: context,
+    //NotificationListener 监听滚动
+    child: RefreshIndicator(
+      color: Colors.blue,
+      onRefresh: _handleRefresh,
+      child: NotificationListener(
+        child: _listView,
+        onNotification: (notification) {
+          if (notification is ScrollUpdateNotification &&
+              notification.depth == 0) {
+            //滚动更新通知 注意 只要有滚动更新就会回调此方法
+            //notification.depth == 0表示只监听listView的滚动
+            _onScroll(notification.metrics.pixels); //当前滚动的像素距离
+          }
+          return false; //只监听 不消费
+        },
+      ),
+    ),
+  );
+  @override
+  void initState() {
+    super.initState();
+    _handleRefresh();
+  }
 
   void _onScroll(double offset) {
     print('offset: $offset');
@@ -91,9 +138,32 @@ class _HomePageState extends State<HomePage>
     } else if (alpha > 1) {
       alpha = 1;
     }
-    print('alpha:$alpha');
+    debugPrint('alpha:$alpha');
     setState(() {
       appBarOpacity = alpha;
     });
+  }
+
+  Future<void> _handleRefresh() async {
+    try {
+      HomeModel model = await HomeDao.fetch();
+      setState(() {
+        HomePage.configModel = model.config;
+        localNavList = model.localNavList ?? [];
+        subNavList = model.subNavList ?? [];
+        bannerList = model.bannerList ?? [];
+        gridNavModel = model.gridNav;
+        salesBoxModel = model.salesBox;
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _jumpToSearch() {
+    NavigatorUtil.push(context, const SearchPage());
   }
 }
