@@ -158,15 +158,13 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
               fontWeight: FontWeight.w300,
             ),
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.only(
-                left: 5,
-                bottom: 15,
-                right: 5,
-              ),
+              contentPadding: EdgeInsets.only(left: 5, right: 5, bottom: 16),
               border: InputBorder.none,
               hintText: widget.hint,
               hintStyle: const TextStyle(fontSize: 15),
             ),
+            cursorColor: Colors.blue,
+            cursorHeight: 20,
           )
           : _wrapTap(
             Text(

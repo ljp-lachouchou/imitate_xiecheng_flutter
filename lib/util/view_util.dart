@@ -17,5 +17,6 @@ Widget shadowWrap({required Widget child, EdgeInsetsGeometry? padding}) {
         end: Alignment.bottomCenter,
       ),
     ),
+    child: child,
   );
 }

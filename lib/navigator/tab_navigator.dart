@@ -27,7 +27,12 @@ class _TabNavigatorState extends State<TabNavigator> {
         controller: _controller,
         //禁用左右滚动
         physics: const NeverScrollableScrollPhysics(),
-        children: [HomePage(), SearchPage(), TravelPage(), MyPage()],
+        children: [
+          HomePage(),
+          SearchPage(hideLeft: true),
+          TravelPage(),
+          MyPage(),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         fixedColor: Colors.blue, //文本默认颜色
