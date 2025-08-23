@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_learn/model/home_model.dart';
 
+import '../util/navigator_util.dart';
+
 class SubNavWidget extends StatelessWidget {
   final List<CommonModel> subNavList;
   const SubNavWidget({super.key, required this.subNavList});
@@ -45,7 +47,12 @@ class SubNavWidget extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          //todo:跳转到h5
+          NavigatorUtil.jumpH5(
+            url: model.url,
+            statusBarColor: model.statusBarColor,
+            title: model.title,
+            hideAppBar: model.hideAppBar,
+          );
         },
         child: Column(
           children: [

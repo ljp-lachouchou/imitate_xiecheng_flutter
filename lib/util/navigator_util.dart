@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_learn/widget/hi_webview.dart';
 
 import '../navigator/tab_navigator.dart';
 import '../pages/login_page.dart';
@@ -34,8 +35,44 @@ class NavigatorUtil {
   }
 
   static pop(BuildContext context) {
+    debugPrint("执行了pop");
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
+  }
+
+  //跳转h5
+  static jumpH5({
+    BuildContext? context,
+    required String? url,
+    String? title,
+    bool? hideAppBar,
+    String? statusBarColor,
+  }) {
+    if (url == null) {
+      debugPrint('jumpH5 url is null, jumpH5 failed.');
+      return;
+    }
+    BuildContext safeContext;
+    if (context != null) {
+      safeContext = context!;
+    } else if (_context?.mounted ?? false) {
+      safeContext = _context!;
+    } else {
+      debugPrint('context is null jumpH5 failed.');
+      return;
+    }
+    Navigator.push(
+      safeContext,
+      MaterialPageRoute(
+        builder:
+            (BuildContext context) => HiWebView(
+              url: url,
+              title: title,
+              hideAppBar: hideAppBar,
+              statusBarColor: statusBarColor,
+            ),
+      ),
+    );
   }
 }

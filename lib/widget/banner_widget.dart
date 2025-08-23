@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_learn/model/home_model.dart';
+import 'package:flutter_learn/util/navigator_util.dart';
 import 'package:flutter_learn/util/screen_adapter_helper.dart';
 
 ///轮播图的视线
@@ -44,7 +45,11 @@ class _BannerWidgetState extends State<BannerWidget> {
   Widget _tabImage(CommonModel model, double width) {
     return GestureDetector(
       onTap: () {
-        //todo navigatorUtil
+        NavigatorUtil.jumpH5(
+          url: model.url,
+          title: model.url,
+          hideAppBar: model.hideAppBar,
+        );
       },
       child: Image.network(model.icon!, width: width, fit: BoxFit.cover),
     );

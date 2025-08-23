@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_learn/util/navigator_util.dart';
 
 import '../model/search_model.dart';
 
@@ -89,7 +90,7 @@ class SearchItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        //todo:h5
+        NavigatorUtil.jumpH5(url: searchItem.url, title: '详情');
       },
       child: _item,
     );

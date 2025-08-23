@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_learn/widget/hi_webview.dart';
 
 ///我的页面
 class MyPage extends StatefulWidget {
@@ -8,12 +9,22 @@ class MyPage extends StatefulWidget {
   State<MyPage> createState() => _MyPagePageState();
 }
 
-class _MyPagePageState extends State<MyPage> {
+class _MyPagePageState extends State<MyPage>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("我的")),
-      body: Column(children: [const Text("我的")]),
+    super.build(context);
+    return const Scaffold(
+      body: HiWebView(
+        url: 'https://m.ctrip.com/webapp/myctrip/',
+        hideAppBar: true,
+        backForbid: true,
+        statusBarColor: '0176ac',
+      ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

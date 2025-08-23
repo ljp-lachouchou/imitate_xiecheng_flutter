@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_learn/model/home_model.dart';
 
+import '../util/navigator_util.dart';
+
 class LocalNavWidget extends StatelessWidget {
   final List<CommonModel> localNavList;
   const LocalNavWidget({super.key, required this.localNavList});
@@ -32,7 +34,12 @@ class LocalNavWidget extends StatelessWidget {
   Widget _item(BuildContext context, CommonModel model) {
     return GestureDetector(
       onTap: () {
-        //todo:跳转H5
+        NavigatorUtil.jumpH5(
+          url: model.url,
+          statusBarColor: model.statusBarColor,
+          title: model.title,
+          hideAppBar: model.hideAppBar,
+        );
       },
       child: Column(
         children: [
