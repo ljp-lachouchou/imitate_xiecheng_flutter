@@ -4,6 +4,7 @@ import 'package:flutter_learn/dao/login_dao.dart';
 import 'package:flutter_learn/navigator/tab_navigator.dart';
 import 'package:flutter_learn/pages/login_page.dart';
 import 'package:flutter_learn/util/screen_adapter_helper.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter之旅',
       theme: ThemeData(
         // This is the theme of your application.
