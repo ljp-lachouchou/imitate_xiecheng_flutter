@@ -1,16 +1,11 @@
-# flutter_learn
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# 仿携程网app
+## 首页
+![img_1.png](display_img/img_1.png)
+## 搜索
+![img_2.png](display_img/img_2.png)
+## 旅拍
+![img_3.png](display_img/img_3.png)
+## 我的
+![img_4.png](display_img/img_4.png)
+## WebView页面
+![img_5.png](display_img/img_5.png)
